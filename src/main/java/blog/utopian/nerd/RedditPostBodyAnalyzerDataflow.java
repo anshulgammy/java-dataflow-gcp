@@ -22,7 +22,7 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 // Note:
 // Command to run this dataflow in local is: mvn exec:java \
 //    -Dexec.mainClass=blog.utopian.nerd.RedditPostBodyAnalyzerDataflow \
-//    -Dexec.args="--output=/Users/anshulgautam/Downloads/output-file"
+//    -Dexec.args="--output=/Users/anshulgautam/Downloads/output-reddit-data/output-file"
 public class RedditPostBodyAnalyzerDataflow {
 
   public static void main(String[] args) throws IOException {
