@@ -1,7 +1,5 @@
 package blog.utopian.nerd;
 
-import static blog.utopian.nerd.util.RedditPostBodyAnalyzerUtil.getRedditPostBodyList;
-
 import blog.utopian.nerd.model.RedditPostBodyOptions;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,10 +17,23 @@ import org.apache.beam.sdk.values.TypeDescriptors;
  * Dataflow driver class to load the csv file, and analyze which words are most used in Reddit post
  * section. Output is written to csv file, and also printed on the console.
  */
-// Note:
-// Command to run this dataflow in local is: mvn exec:java \
+// Note to run from IntelliJ/Local Terminal:
+// Command to run this dataflow in local is:
+// mvn exec:java \
 //    -Dexec.mainClass=blog.utopian.nerd.RedditPostBodyAnalyzerDataflow \
 //    -Dexec.args="--output=/Users/anshulgautam/Downloads/output-reddit-data/output-file"
+
+// Note to run on GCP:
+// To run from locally installed gcloud shell run below command, and then dataflow pipeline job will
+// start executing on GCP based on REGION and GCP project details provided:
+// mvn -Pdataflow-runner compile exec:java \
+//    -Dexec.mainClass=blog.utopian.nerd.RedditPostBodyAnalyzerDataflow \
+//    -Dexec.args="--project=YOUR_PROJECT_ID \
+//    --gcpTempLocation=gs://YOUR_BUCKET/temp/ \
+//    --input=gs://YOUR_BUCKET/input/ \
+//    --output=gs://YOUR_BUCKET/output/ \
+//    --runner=DataflowRunner \
+//    --region=us-east1"
 public class RedditPostBodyAnalyzerDataflow {
 
   public static void main(String[] args) throws IOException {
@@ -31,10 +42,14 @@ public class RedditPostBodyAnalyzerDataflow {
     RedditPostBodyOptions options =
         PipelineOptionsFactory.fromArgs(args).withValidation().as(RedditPostBodyOptions.class);
 
+    System.out.println("Provided input location is: " + options.getInput());
+    System.out.println("Provided output location is: " + options.getOutput());
+
     Pipeline pipeline = Pipeline.create(options);
 
     pipeline
-        .apply("Read CSV File", Create.of(getRedditPostBodyList(options.getInputFile())))
+        // .apply("Read CSV File", Create.of(getRedditPostBodyList(options.getInputFile())))
+        .apply("Read CSV File", TextIO.read().from(options.getInput()))
 
         // Extract words from post line.
         .apply(

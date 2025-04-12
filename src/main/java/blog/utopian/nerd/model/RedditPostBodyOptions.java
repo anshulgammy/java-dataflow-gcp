@@ -9,9 +9,9 @@ public interface RedditPostBodyOptions extends PipelineOptions {
 
   @Description("Path of the file to read from")
   @Default.String("/Users/anshulgautam/Downloads/input-reddit-data/high_school.csv")
-  String getInputFile();
+  String getInput();
 
-  void setInputFile(String value);
+  void setInput(String value);
 
   /** Set this required option to specify where to write the output. */
   @Description("Path of the file to write to")
